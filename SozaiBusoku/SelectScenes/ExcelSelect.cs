@@ -13,6 +13,7 @@ namespace SozaiBusoku
         asd.Layer2D Layer;
         private int StageCount;//現在いるステージセレクト画面位置
         private bool IsRemaking;//リメイクするのか遊ぶのか
+        private bool IsSceneChanging = false;
         public ExcelSelect(bool isRemaking)
         {
             IsRemaking = isRemaking;
@@ -26,10 +27,16 @@ namespace SozaiBusoku
             Files = System.IO.Directory.GetFiles(Environment.CurrentDirectory +"\\", "*.xlsx", System.IO.SearchOption.AllDirectories);
             for (int i = 0; i < Files.Count(); i++)
                 Files[i] = Files[i].Replace(Environment.CurrentDirectory + "\\", "").Replace(".xlsx", "");
-            //遷移が分かりにくい
             if (Files.Count() == 0)
-            { 
-                asd.Engine.ChangeScene(new TitleScene());
+            {
+                IsSceneChanging = true;
+                String text = "ステージファイルが見つかりません\n";
+                var title = new GeneralText(new asd.Vector2DF(asd.Engine.WindowSize.X / 2, 4 * Program.CellLarge), text, 50, new asd.Color(2, 20, 20, 200), 5, new asd.Color(222, 222, 222, 200));
+                title.LineSpacing = -1.6f * Program.CellLarge;
+                Layer.AddObject(new BackGround());
+                Layer.AddObject(title);
+                asd.Engine.ChangeSceneWithTransition(new TitleScene(), new asd.TransitionFade(2.0f, 0.3f));
+                return;
             }
             ChangeStage(true);
         }
@@ -78,6 +85,10 @@ namespace SozaiBusoku
 
         protected override void OnUpdated()
         {
+            if (IsSceneChanging)
+            {
+                return;
+            }
             if (asd.Engine.Keyboard.GetKeyState(asd.Keys.Enter) == asd.KeyState.Push||DualShockController.IsJoystickPush(2))
             {
                 int t = Button.CurrentRow;

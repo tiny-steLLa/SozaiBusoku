@@ -23,7 +23,6 @@ namespace SozaiBusoku
             StageFileName = "stage";
             asd.Engine.Initialize("ASB", WindowSizeX, WindowSizeY, new asd.EngineOption());
             asd.Engine.File.AddRootDirectory("resource/");
-    //        asd.Engine.File.AddRootPackageWithPassword("resource.pack", "2211");
             SoundsController.SoundBGM();
             TitleScene scene = new TitleScene();
             asd.Engine.ChangeSceneWithTransition(scene, new asd.TransitionFade(0, 0));
